@@ -1,0 +1,107 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta content="_IN_R900_oolI5RQXkcge4oNA1j16LtLZH3ej67TyhE" name="google-site-verification"><meta name="referrer" content="no-referrer-when-downgrade"><meta http-equiv="Content-Language" Content="zh-CN"><meta name="description" content="本篇文章是本人结合网络教程和自己实际安装过程写下，愿给后来者以帮助同时给自己未来需要时以提醒。&lt;br&gt;有问题或者由于时间问题导致失效可以留言。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>在Centos7.5系统下的nginx和php的安装与配置 | deepExplore</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.2.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Archives</a><a class="sidebar-nav-item" href="/about">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/centos7/" rel="tag">centos7</a> | <a class="post-tag-none-link" href="/tags/linux/" rel="tag">linux</a> | <a class="post-tag-none-link" href="/tags/php/" rel="tag">php</a></div><div class="post-time">2021-02-19</div></div></div><div class="container post-header"><h1>在Centos7.5系统下的nginx和php的安装与配置</h1><p> <strong>本文作者：</strong>deepMin</p><p> <strong>版权声明：</strong><a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">知识共享协议(署名-非商业性使用-禁止演绎 4.0)</a></p><p><span id="busuanzi_container_page_pv"></span><strong>本文总阅读量： </strong><span id="busuanzi_value_page_pv"></span>次</p></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Nginx%E5%BC%95%E6%93%8E"><span class="toc-number">1.</span> <span class="toc-text">安装Nginx引擎</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%89%E8%A3%85%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">1.1.</span> <span class="toc-text">安装前的准备工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E5%BC%8F%E5%AE%89%E8%A3%85"><span class="toc-number">1.2.</span> <span class="toc-text">正式安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85php7-1"><span class="toc-number">2.</span> <span class="toc-text">安装php7.1</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx%E8%A7%A3%E6%9E%90php"><span class="toc-number">3.</span> <span class="toc-text">Nginx解析php</span></a></li></ol></details></div><div class="container post-content"><p>本篇文章是本人结合网络教程和自己实际安装过程写下，愿给后来者以帮助同时给自己未来需要时以提醒。<br>有问题或者由于时间问题导致失效可以留言。</p>
+<h2 id="安装Nginx引擎"><a href="#安装Nginx引擎" class="headerlink" title="安装Nginx引擎"></a>安装Nginx引擎</h2><h3 id="安装前的准备工作"><a href="#安装前的准备工作" class="headerlink" title="安装前的准备工作"></a>安装前的准备工作</h3><ol>
+<li><strong>gcc的安装</strong></li>
+</ol>
+<p>安装 nginx 需要先将官网下载的源码进行编译，编译依赖 gcc 环境，如果没有 gcc 环境，则需要安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install gcc-g++</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li><strong>PCRE pcre-devel安装</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install -y pcre pcre-devel</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li><strong>zlib安装</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install -y zlib zlib-devel</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li><strong>OpenSSL安装</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum install -y openssl openssl-devel</span><br></pre></td></tr></table></figure>
+
+<h3 id="正式安装"><a href="#正式安装" class="headerlink" title="正式安装"></a>正式安装</h3><ol>
+<li><strong>从官网上下载.tar.gz安装包</strong> </li>
+</ol>
+<p>使用wget工具<br>如果没有wget工具的话，可以使用<code>yum install wget</code>命令进行安装</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ wget -c https://nginx.org/download/nginx-1.12.0.tar.gz</span><br></pre></td></tr></table></figure>
+<p>建议下载稳定版</p>
+<ol start="2">
+<li><strong>解压</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ tar -zxvf nginx-1.12.0.tar.gz</span><br></pre></td></tr></table></figure>
+<p>然后进入到解压的目录里面</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> nginx-1.12.0</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>配置</strong></li>
+</ol>
+<p>选用默认配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./configure</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li><strong>编译安装</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ make</span><br><span class="line">$ make install</span><br></pre></td></tr></table></figure>
+<p>使用whereis命令来查找安装路径</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ whereis nginx</span><br></pre></td></tr></table></figure>
+<p>默认的安装路径是  <code>/usr/local/nginx</code></p>
+<ol start="5">
+<li><strong>启动，停止，重写加载nginx</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$  <span class="built_in">cd</span> /usr/<span class="built_in">local</span>/nginx/sbin</span><br><span class="line">$ ./nginx  <span class="comment">#启动nginx</span></span><br><span class="line">$ ./nginx -s stop <span class="comment">#停止</span></span><br><span class="line">$./nginx -s reload /<span class="comment">#重新加载</span></span><br><span class="line">$ ./nginx -s quit  <span class="comment">#同样是停止 但是是等nginx处理完毕任务后再停止</span></span><br></pre></td></tr></table></figure>
+<p>如果有其他进程占据80端口的话会报错，错误信息如下</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nginx: [emerg] <span class="built_in">bind</span>() to 0.0.0.0:80 failed (98: Address already <span class="keyword">in</span> use)</span><br></pre></td></tr></table></figure>
+<p>这时需要关闭占据80端口的进程或者杀死该进程<br>如果需要查询nginx进程，可以使用如下的命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ps aux|grep nginx</span><br></pre></td></tr></table></figure>
+<p>如果需要开机自启动，在rc.local增加启动代码就可以了</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ vi /etc/re.local</span><br><span class="line"><span class="comment">#增加一行  /usr/local/nginx/sbin/nginx</span></span><br><span class="line"><span class="comment">#退出后，设置权限</span></span><br><span class="line">$ chmod 755 rc.local**</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://static.deepexplore.top/20210219133545.png" alt="20190720124223880"></p>
+<ol start="6">
+<li><strong>测试</strong></li>
+</ol>
+<p>打开浏览器访问localhost会出现 welocme to nginx的页面。这样第一部分安装nginx安装就完成了 。</p>
+<h2 id="安装php7-1"><a href="#安装php7-1" class="headerlink" title="安装php7.1"></a>安装php7.1</h2><ol>
+<li><strong>安装php源</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm </span><br><span class="line">$ rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm</span><br></pre></td></tr></table></figure>
+<p>检查源是否安装成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ yum repolist enabled | grep <span class="string">&quot;webtatic*&quot;</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li><strong>第二步，安装php和php扩展源</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ yum -y install php71w php71w-fpm</span><br><span class="line">$ yum -y install php71w-mbstring php71w-common php71w-gd php71w-mcrypt</span><br><span class="line">$ yum -y install php71w-mysql php71w-xml php71w-cli php71w-devel</span><br><span class="line">$ yum -y install php71w-pecl-memcached php71w-pecl-redis php71w-opcache</span><br></pre></td></tr></table></figure>
+<p>其中  php71w-fpm是为了与nginx能够解析php文件所需要的，第三步，验证php是否安装成功。<br>查看php的版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ php -v</span><br></pre></td></tr></table></figure>
+<p>查看php的扩展源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ php -m</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://static.deepexplore.top/20210219134501.png" alt="201907201425593"></p>
+<h2 id="Nginx解析php"><a href="#Nginx解析php" class="headerlink" title="Nginx解析php"></a>Nginx解析php</h2><ol>
+<li><strong>修改nginx.conf文件</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span>  /usr/<span class="built_in">local</span>/nginx/conf</span><br><span class="line">$ vim nginx.conf</span><br></pre></td></tr></table></figure>
+<p>修改如下图的部分<br><img src="https://static.deepexplore.top/20210219134836.png" alt="20190720143306401"><br>取消65行到71部分的注释<br>修改 <code>/scripts</code> 为<code> $document_root</code><br>同时修改第45行，在红框内添加 index.php<br><img src="https://static.deepexplore.top/20210219134906.png" alt="20190720143642694"></p>
+<ol start="2">
+<li><strong>第二步，开启php-fpm</strong></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl start  php-fpm</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>第三步，测试是否可以解析php文件</strong></li>
+</ol>
+<p><strong>注意：</strong> 上文两张图中有一个root html  这个说明nginx服务器项目路径是从<code>/usr/local/nginx/html</code>中开始的。<br>添加一个php文件进行测试<br>进入目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> /usr/lcoal/nginx/html</span><br><span class="line">$ vim index.php</span><br></pre></td></tr></table></figure>
+<p>index.php编写的内容如下：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">phpinfo();</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>保存退出，开启nginx，访问localhost。<br>访问结果如下，说明可以成功解析php文件。至此，php和nginx安装调试完毕。</p>
+<p><img src="https://static.deepexplore.top/20210219135826.png" alt="20190720144547711"></p>
+</div></div><div class="post-main post-comment"><div id="tcomment"></div><script src="https://cdn.jsdelivr.net/npm/twikoo@1.2.0/dist/twikoo.all.min.js"></script>
+<script>
+twikoo.init({
+envId: 'comment-3gdtn1fbb284b5ce',
+el: '#tcomment',
+// region: 'ap-guangzhou', // 环境地域，默认为 ap-shanghai，如果您的环境地域不是上海，需传此参数
+// path: 'window.location.pathname', // 用于区分不同文章的自定义 js 路径，如果您的文章路径不是 location.pathname，需传此参数
+})
+</script></div></article><footer class="footer wrapper"><div class="social"><a href="mailto:deepMin@mail.deepexplore.top" target="_blank"><i class="fa fa-envelope-o"></i></a><a href="https://github.com/elfisworking" target="_blank"><i class="fa fa-github"></i></a></div><div class="ICP"><a ref="备案" target="_blank" rel="noopener" href="https://beian.miit.gov.cn/">京ICP备2021004603号</a></div><div class="ICP"><a ref="公安" target="_blank" rel="noopener" href="http://www.beian.gov.cn/portal/registerSystemInfo">苏公网安备32120202010423号</a></div><script async="async" src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.js"></script></footer><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcdn.net/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcdn.net/ajax/libs/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcdn.net/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

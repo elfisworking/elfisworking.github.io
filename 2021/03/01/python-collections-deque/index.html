@@ -1,0 +1,67 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta content="_IN_R900_oolI5RQXkcge4oNA1j16LtLZH3ej67TyhE" name="google-site-verification"><meta name="referrer" content="no-referrer-when-downgrade"><meta http-equiv="Content-Language" Content="zh-CN"><meta name="description" content="deque队列即双向队列，其中deque是”double-ended queue”的简写。deque支持从左边或者右边高效的添加&lt;code&gt;append&lt;/code&gt;和弹出&lt;code&gt;pop&lt;/code&gt; ，时间复杂度是O(1)。同时，deque也是线程安全的。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Python collections.deque | deepExplore</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.2.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Archives</a><a class="sidebar-nav-item" href="/about">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/package/" rel="tag">package</a> | <a class="post-tag-none-link" href="/tags/python/" rel="tag">python</a></div><div class="post-time">2021-03-01</div></div></div><div class="container post-header"><h1>Python collections.deque</h1><p> <strong>本文作者：</strong>deepMin</p><p> <strong>版权声明：</strong><a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">知识共享协议(署名-非商业性使用-禁止演绎 4.0)</a></p><p><span id="busuanzi_container_page_pv"></span><strong>本文总阅读量： </strong><span id="busuanzi_value_page_pv"></span>次</p></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#deque%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="toc-number">1.</span> <span class="toc-text">deque的创建</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#deque%E7%9A%84%E6%96%B9%E6%B3%95"><span class="toc-number">2.</span> <span class="toc-text">deque的方法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B6%E4%BB%96"><span class="toc-number">3.</span> <span class="toc-text">其他</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">4.</span> <span class="toc-text">参考</span></a></li></ol></details></div><div class="container post-content"><p>deque队列即双向队列，其中deque是”double-ended queue”的简写。deque支持从左边或者右边高效的添加<code>append</code>和弹出<code>pop</code> ，时间复杂度是O(1)。同时，deque也是线程安全的。</p>
+<h2 id="deque的创建"><a href="#deque的创建" class="headerlink" title="deque的创建"></a>deque的创建</h2><p>对于deque来说，初始化参数可以有两个，一个是<em>iterable</em>对象，一个maxlen值。</p>
+<blockquote>
+<p>class collection.<strong>deque</strong>(<strong>[</strong> <em>iterable</em> <strong>[</strong>,<em>maxlen</em> <strong>]]</strong>)</p>
+</blockquote>
+<p>如果<em>maxlen</em>没有指定或者是<code>None</code>,那么deque可以增长到任意的长度。否则，deque的最大长度就是<em>maxlen</em>。一旦限定长度的deque满了，当新项加入时，同样数量的项就从另一端弹出。另外，如果<em>iterable</em>没有指定的话，那么会创建一个空deque。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> deque</span><br><span class="line">d = deque() <span class="comment">#创建一个空deque</span></span><br><span class="line">d = deque(<span class="string">&quot;abc&quot;</span>) <span class="comment"># 创建一个deque含有3个items</span></span><br><span class="line">d = deque(<span class="string">&quot;abc&quot;</span>,<span class="number">4</span>) <span class="comment"># 创建一个deque含有3个items,并且其最大长度为4</span></span><br><span class="line">d = deque(<span class="number">4</span>) <span class="comment"># 这样是不被允许的</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="deque的方法"><a href="#deque的方法" class="headerlink" title="deque的方法"></a>deque的方法</h2><p>下图展示了deque的一些基本操作。</p>
+<img src="https://static.deepexplore.top/20210301222830.png" >
+
+
+
+<p>双向队列dequez对象支持如下的所有方法。</p>
+<ul>
+<li>append(<em>x</em>) # 将元素x添加到队列的右端。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">d = deque()</span><br><span class="line">d.append(<span class="number">1</span>) <span class="comment"># 将1添加到双向队列右端</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>appnedleft(<em>x</em>) # 将元素x添加到双向队列左端。</p>
+</li>
+<li><p>clear() # 移除所有的元素，使双向队列的长度为0。</p>
+</li>
+<li><p>copy() # 创建一个浅拷贝。<strong>注意</strong>：这是3.5版本添加的新功能。</p>
+</li>
+<li><p>extend(<em>iterable</em>) # 将<em>iterable</em>中的元素添加到双向队列的右边。</p>
+</li>
+<li><p>extendleft(<em>iterable</em>) # 将<em>iterable</em>中的元素天骄到双向队列的左边。<strong>注意</strong>：左添加时，在结果中iterable参数中的顺序将被反过来添加。</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">d.append(<span class="number">1</span>)</span><br><span class="line">d.extendleft([<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>])</span><br><span class="line"><span class="comment">#output:deque([5, 4, 3, 1])</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>index(<em>x</em> <strong>[</strong>,<em>start</em> <strong>[</strong>,<em>stop</em> <strong>]]</strong>) # 返回元素x在deque中的位置，范围为索引<em>start</em>之后，索引<em>stop</em>之前。默认是整个deque。如果找到，则返回第一个匹配项，如果没有找到，则会引发一个<code>ValueError</code>。</p>
+</li>
+<li><p>insert(<em>i</em>,<em>x</em>) # 在位置i插入元素x。如果插入导致deque超出<em>maxlen</em>，那么就会引发一个<code>indexError</code>。<strong>注意</strong>：这是3.5版本添加的新功能。</p>
+</li>
+<li><p>pop() # 移去并返回deque最右侧的元素。如果没有的话，则会引发引发一个<code>IndexError</code>。<strong>注意</strong>：这是3.5版本添加的新功能。</p>
+</li>
+<li><p>popleft() # 与pop()类似，不过这次是左边。</p>
+</li>
+<li><p>remove(<em>value</em>) # 移除找到的第一个<em>value</em>。如果找不到的话，则会引起一个<code>ValueError</code>。</p>
+</li>
+<li><p>reverse() # 将deque逆序。返回的是一个<code>None</code>。<strong>注意</strong>：这是3.2版本添加的新功能。</p>
+</li>
+<li><p>rotate(<em>n=1</em>) # 向右循环移动n步。如果n为负数的话，则就向左循环。</p>
+</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 顺时针</span></span><br><span class="line">q = collections.deque([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line">q.rotate(<span class="number">1</span>)</span><br><span class="line">print(q)  <span class="comment"># [4, 1, 2, 3]</span></span><br><span class="line">q.rotate(<span class="number">1</span>)</span><br><span class="line">print(q)  <span class="comment"># [3, 4, 1, 2]</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 逆时针</span></span><br><span class="line">q = collections.deque([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line">q.rotate(<span class="number">-1</span>)</span><br><span class="line">print(q)  <span class="comment"># [2, 3, 4, 1]</span></span><br><span class="line">q.rotate(<span class="number">-1</span>)</span><br><span class="line">print(q)  <span class="comment"># [3, 4, 1, 2]</span></span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><p>除了以上操作，deque 还支持迭代、封存、<code>len(d)</code>、<code>reversed(d)</code>、<code>copy.copy(d)</code>、<code>copy.deepcopy(d)</code>、成员检测运算符 <code>in</code> 以及下标引用例如通过 <code>d[0]</code> 访问首个元素等。 索引访问在两端的复杂度时均为 O(1) 但在中间时则会低至 O(n)。 如需快速随机访问，请改用列表。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># in运算符</span></span><br><span class="line">q = collections.deque([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>])</span><br><span class="line">print(<span class="number">5</span> <span class="keyword">in</span> q)  <span class="comment"># False</span></span><br><span class="line">print(<span class="number">1</span> <span class="keyword">in</span> q)  <span class="comment"># True</span></span><br></pre></td></tr></table></figure>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ranzhong/p/12438841.html">https://www.cnblogs.com/ranzhong/p/12438841.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/library/collections.html?highlight=deque#collections.deque">https://docs.python.org/zh-cn/3/library/collections.html?highlight=deque#collections.deque</a></li>
+</ul>
+</div></div><div class="post-main post-comment"><div id="tcomment"></div><script src="https://cdn.jsdelivr.net/npm/twikoo@1.2.0/dist/twikoo.all.min.js"></script>
+<script>
+twikoo.init({
+envId: 'comment-3gdtn1fbb284b5ce',
+el: '#tcomment',
+// region: 'ap-guangzhou', // 环境地域，默认为 ap-shanghai，如果您的环境地域不是上海，需传此参数
+// path: 'window.location.pathname', // 用于区分不同文章的自定义 js 路径，如果您的文章路径不是 location.pathname，需传此参数
+})
+</script></div></article><footer class="footer wrapper"><div class="social"><a href="mailto:deepMin@mail.deepexplore.top" target="_blank"><i class="fa fa-envelope-o"></i></a><a href="https://github.com/elfisworking" target="_blank"><i class="fa fa-github"></i></a></div><div class="ICP"><a ref="备案" target="_blank" rel="noopener" href="https://beian.miit.gov.cn/">京ICP备2021004603号</a></div><div class="ICP"><a ref="公安" target="_blank" rel="noopener" href="http://www.beian.gov.cn/portal/registerSystemInfo">苏公网安备32120202010423号</a></div><script async="async" src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.js"></script></footer><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcdn.net/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcdn.net/ajax/libs/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcdn.net/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>

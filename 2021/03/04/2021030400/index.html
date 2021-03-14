@@ -1,0 +1,109 @@
+<!DOCTYPE html><html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta content="_IN_R900_oolI5RQXkcge4oNA1j16LtLZH3ej67TyhE" name="google-site-verification"><meta name="referrer" content="no-referrer-when-downgrade"><meta http-equiv="Content-Language" Content="zh-CN"><meta name="description" content="在日常中，我们常常需要&lt;code&gt;linux&lt;/code&gt;系统来执行定时任务。而这时就需要我们使用&lt;code&gt;crontab&lt;/code&gt;命令来完成此项任务。"><link rel="stylesheet" type="text/css" href="/css/normalize.css"><link rel="stylesheet" type="text/css" href="/css/highlight.css"><link rel="stylesheet" type="text/css" href="/css/noise.css"><title>Linux crontab命令实现定时任务 | deepExplore</title><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><meta name="generator" content="Hexo 5.2.0"></head><body><article class="wrapper"><div class="post-main"><div class="nav"><nav class="container"><a class="sidebar-nav-item active" href="/">Home</a><a class="sidebar-nav-item" href="/archives">Archives</a><a class="sidebar-nav-item" href="/about">About</a></nav><div class="container post-meta"><div class="post-tags"><a class="post-tag-none-link" href="/tags/linux/" rel="tag">linux</a> | <a class="post-tag-none-link" href="/tags/shell/" rel="tag">shell</a></div><div class="post-time">2021-03-04</div></div></div><div class="container post-header"><h1>Linux crontab命令实现定时任务</h1><p> <strong>本文作者：</strong>deepMin</p><p> <strong>版权声明：</strong><a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh" target="_blank">知识共享协议(署名-非商业性使用-禁止演绎 4.0)</a></p><p><span id="busuanzi_container_page_pv"></span><strong>本文总阅读量： </strong><span id="busuanzi_value_page_pv"></span>次</p></div><div class="container post-toc"><details class="toc"><summary class="toc-accordion">Table of Contents</summary><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#crontab-%E5%91%BD%E4%BB%A4%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.</span> <span class="toc-text">crontab 命令介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="toc-number">2.</span> <span class="toc-text">任务的定义</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AE%BE%E7%BD%AE%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1"><span class="toc-number">3.</span> <span class="toc-text">设置定时任务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#crontab-%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="toc-number">4.</span> <span class="toc-text">crontab 相关配置文件</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">5.</span> <span class="toc-text">参考</span></a></li></ol></details></div><div class="container post-content"><p>在日常中，我们常常需要<code>linux</code>系统来执行定时任务。而这时就需要我们使用<code>crontab</code>命令来完成此项任务。</p>
+<h2 id="crontab-命令介绍"><a href="#crontab-命令介绍" class="headerlink" title="crontab 命令介绍"></a>crontab 命令介绍</h2><p><code>crontab</code>命令被用于提交和管理用户提交的需要定期执行的任务。而<code>crontab</code>命令需要<code>crond</code>服务支持。<code>crond</code>是<code>Linux</code>下用来周期地执行某种任务或等待处理某些事件的一个守护进程。在安装linux系统时，<code>crond</code>一般会被自动安装。我们可以通过如下的命令查看、启动、重启<code>crond</code>服务。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ service crond status <span class="comment"># 查看crond状态</span></span><br><span class="line">$ service crond start <span class="comment"># 启动crond服务</span></span><br><span class="line">$ service crond restart <span class="comment"># 重启crond服务</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>crontab 语法</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">Usage:</span><br><span class="line"> crontab [options] file</span><br><span class="line"> crontab [options]</span><br><span class="line"> crontab -n [hostname]</span><br><span class="line"></span><br><span class="line">Options:</span><br><span class="line"> -u &lt;user&gt;  define user </span><br><span class="line"> # 用来设定某个用户的 crontab 服务，例如 &quot;-u demo&quot; 表示设备 demo用户的 crontab 服务，此选项一般有 root 用户来运行。</span><br><span class="line"> -e         edit user&#39;s crontab 、</span><br><span class="line"> # 编辑某个用户的 crontab 文件内容。如果不指定用户，则表示编辑当前用户的 crontab 文件。</span><br><span class="line"> -l         list user&#39;s crontab</span><br><span class="line"> # 显示某用户的 crontab 文件内容，如果不指定用户，则表示显示当前用户的 crontab 文件内容。</span><br><span class="line"> -r         delete user&#39;s crontab</span><br><span class="line"> # 从 &#x2F;var&#x2F;spool&#x2F;cron 删除某用户的 crontab 文件，如果不指定用户，则默认删除当前用户的 crontab 文件。</span><br><span class="line"> -i         prompt before deleting </span><br><span class="line"> # 在删除用户的 crontab 文件时，给确认提示。</span><br><span class="line"> -n &lt;host&gt;  set host in cluster to run users&#39; crontabs</span><br><span class="line"> -c         get host in cluster to run users&#39; crontabs</span><br><span class="line"> -s         selinux context</span><br><span class="line"> -x &lt;mask&gt;  enable debugging</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：这里的 <em>file</em> 指的是包含待执行任务的<code>crontab</code>文件。</p>
+<h2 id="任务的定义"><a href="#任务的定义" class="headerlink" title="任务的定义"></a>任务的定义</h2><p><code>crontab</code>文件的含义：用户所建立的crontab文件中，每一行都代表一项任务，每行的每个字段代表一项设置，它的格式共分为六个字段，前五段是时间设定段，第六段是要执行的命令段，格式如下：</p>
+<blockquote>
+<p>minute  hour  day   month   week  command </p>
+</blockquote>
+<p>其中：</p>
+<ul>
+<li>minute： 表示分钟，可以是从0到59之间的任何整数。</li>
+<li>hour：表示小时，可以是从0到23之间的任何整数。</li>
+<li>day：表示日期，可以是从1到31之间的任何整数。</li>
+<li>month：表示月份，可以是从1到12之间的任何整数。</li>
+<li>week：表示星期几，可以是从0到7之间的任何整数，这里的0或7代表星期日。</li>
+<li>command：要执行的命令，可以是系统命令，也可以是自己编写的脚本文件。</li>
+</ul>
+<p>在以上各个字段中，还可以使用以下特殊字符：</p>
+<ul>
+<li><p>星号（*）：代表所有可能的值，例如month字段如果是星号，则表示在满足其它字段的制约条件后每月都执行该命令操作。</p>
+</li>
+<li><p>逗号（,）：可以用逗号隔开的值指定一个列表范围，例如，“1,2,5,7,8,9”</p>
+</li>
+<li><p>中杠（-）：可以用整数之间的中杠表示一个整数范围，例如“2-6”表示“2,3,4,5,6”</p>
+</li>
+<li><p>正斜线（/）：可以用正斜线指定时间的间隔频率，例如“0-23/2”表示每两小时执行一次。同时正斜线可以和星号一起使用，例如*/10，如果用在minute字段，表示每十分钟执行一次。</p>
+</li>
+</ul>
+<p><strong>注意</strong>：在定义任务时，我们可以分别以周或者是日月为单位作为循环，但我们不可使用 <em>几月几号且为星期几</em>  的模式工作。</p>
+<p>下面的例子是一个错误的写法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">30 12 11 9 5 root echo &quot;test mission&quot; </span><br></pre></td></tr></table></figure>
+
+<h2 id="设置定时任务"><a href="#设置定时任务" class="headerlink" title="设置定时任务"></a>设置定时任务</h2><p>我们可以如下的几种方式进行定时任务的设置。</p>
+<ul>
+<li>用户定时任务：使用<code>crontab -e</code>命令</li>
+</ul>
+<p>用户定时任务：用户定期要执行的工作，比如用户数据备份、定时邮件提醒等。</p>
+<p>我们可以使用<code>crontab -e</code>进入某个用户的定时任务编辑界面。如果不指定用户的话，则进入当</p>
+<p>前用户的编辑界面。在编辑界面中，一行表示一个定时任务。如下图所示，编辑界面含有两个定时任务。</p>
+<p><img src="https://static.deepexplore.top/20210303155707.png" alt="屏幕截图 2021-03-03 155633"></p>
+<ul>
+<li>系统定时任务：编辑<code>/etc/crontab</code>文件</li>
+</ul>
+<p>系统定时任务：系统周期性所要执行的工作，比如写缓存数据到硬盘、日志清理等。在<code>/etc</code>目录下有一个crontab文件，这个就是系统任务调度的配置文件。</p>
+<p>首先，我们先来看看文件的内容。使用<code>cat /etc/crontab</code>，内容如下。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">SHELL&#x3D;&#x2F;bin&#x2F;bash</span><br><span class="line">PATH&#x3D;&#x2F;sbin:&#x2F;bin:&#x2F;usr&#x2F;sbin:&#x2F;usr&#x2F;bin</span><br><span class="line">MAILTO&#x3D; root</span><br><span class="line">HOME&#x3D;&#x2F;</span><br><span class="line"># For details see man 4 crontabs</span><br><span class="line"></span><br><span class="line"># Example of job definition:</span><br><span class="line"># .---------------- minute (0 - 59)</span><br><span class="line"># |  .------------- hour (0 - 23)</span><br><span class="line"># |  |  .---------- day of month (1 - 31)</span><br><span class="line"># |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...</span><br><span class="line"># |  |  |  |  .---- day of week (0 - 6) (Sunday&#x3D;0 or 7) OR sun,mon,tue,wed,thu,fri,sat</span><br><span class="line"># |  |  |  |  |</span><br><span class="line"># *  *  *  *  * user-name  command to be executed</span><br><span class="line">51 * * * * root run-parts &#x2F;etc&#x2F;cron.hourly</span><br><span class="line">24 7 * * * root run-parts &#x2F;etc&#x2F;cron.daily</span><br><span class="line">22 4 * * 0 root run-parts &#x2F;etc&#x2F;cron.weekly</span><br><span class="line">42 4 1 * * root run-parts &#x2F;etc&#x2F;cron.monthly</span><br></pre></td></tr></table></figure>
+<p>前面四行是用来配置<code>crond</code>任务运行的环境。</p>
+<p>第一行：指定了环境所使用的shell。</p>
+<p>第二行：指定了系统执行命令的路径。</p>
+<p>第三行：指定了<code>crond</code>的任务执行信息将通过电子邮件发送的用户，这里发给root用户。如果为空，则不发给任何人。</p>
+<p>第四行：指定了执行命令或者脚本时的主目录。</p>
+<p>下面的几行，则是系统执行的任务。每个任务占据一行。</p>
+<p><strong>注意</strong>：在这里定义任务时，需要指定用户。而用户任务则不需要。</p>
+<h2 id="crontab-相关配置文件"><a href="#crontab-相关配置文件" class="headerlink" title="crontab 相关配置文件"></a>crontab 相关配置文件</h2><ul>
+<li>用户权限文件</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">\etc\cron.deny</span><br><span class="line">\etc\cron.allow</span><br></pre></td></tr></table></figure>
+
+<p>使用说明：</p>
+<ol>
+<li><p>当系统中有 <code>/etc/cron.allow</code> 文件时，只有写入此文件的用户可以使用 <code>crontab</code> 命令，没有写入的用户不能使用 crontab 命令。同样，如果有此文件，<code>/etc/cron.deny</code> 文件会被忽略，因为 <code>/etc/cron.allow </code>文件的优先级更高。</p>
+</li>
+<li><p>当系统中只有<code>/etc/cron.deny</code>文件时，写入此文件的用户不能使用 <code>crontab</code> 命令，没有写入文件的用户可以使用 <code>crontab</code> 命令。</p>
+</li>
+<li><p>Linux 系统中默认只有<code>/etc/cron.deny</code> 文件。</p>
+</li>
+</ol>
+<ul>
+<li>用户任务存放目录</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;etc&#x2F;spool&#x2F;cron&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>说明：所有用户crontab文件存放的目录,以用户名命名。</p>
+<ul>
+<li><code>cron.daily </code>、<code>cron.hourly</code>、<code>cron.weekly</code>和<code>cron.monthly</code>目录</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;etc&#x2F;cron.daily&#x2F;</span><br><span class="line">&#x2F;etc&#x2F;cron.hourly&#x2F;</span><br><span class="line">&#x2F;etc&#x2F;cron.weekly&#x2F;</span><br><span class="line">&#x2F;etc&#x2F;cron.monthly&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>说明：在四个文件夹里面存放了<code>crond</code>按天、小时、周和月执行的脚本。</p>
+<p>解释：</p>
+<p>看一下 <code>anacrontab</code> 这个配置文件中的代码：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># /etc/anacrontab: configuration file for anacron</span><br><span class="line"># See anacron(8) and anacrontab(5) for details.</span><br><span class="line">SHELL=/bin/sh</span><br><span class="line">PATH=/sbin:/bin:/usr/sbin:/usr/bin</span><br><span class="line">MAILTO=root</span><br><span class="line"># the maximal random delay added to the base delay of the jobs</span><br><span class="line">RANDOM_DELAY=45</span><br><span class="line"># the jobs will be started during the following hours only</span><br><span class="line">START_HOURS_RANGE=3-22</span><br><span class="line">#period in days   delay in minutes   job-identifier   command</span><br><span class="line">1       5       cron.daily              nice run-parts /etc/cron.daily</span><br><span class="line">7       25      cron.weekly             nice run-parts /etc/cron.weekly</span><br><span class="line">@monthly 45     cron.monthly            nice run-parts /etc/cron.monthly</span><br></pre></td></tr></table></figure>
+
+<p>在系统启动时会读取一次 <code>anacrontab</code> 中的配置参数。</p>
+<p>这里以每天举例。在读取完成 <code>anacrontab</code> 文件后，<code>crond</code> 程序会在每天的 4点12分 左右执行一次 <code>cron.daily</code> 下的文件。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/linux-crontab-tasks.html">https://www.runoob.com/w3cnote/linux-crontab-tasks.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://c.biancheng.net/view/1092.html">http://c.biancheng.net/view/1092.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ftl1012/p/crontab.html">https://www.cnblogs.com/ftl1012/p/crontab.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://man.linuxde.net/crontab">https://man.linuxde.net/crontab</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xd502djj/p/4292781.html">https://www.cnblogs.com/xd502djj/p/4292781.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/57000081/answer/301299818">https://www.zhihu.com/question/57000081/answer/301299818</a></li>
+</ul>
+</div></div><div class="post-main post-comment"><div id="tcomment"></div><script src="https://cdn.jsdelivr.net/npm/twikoo@1.2.0/dist/twikoo.all.min.js"></script>
+<script>
+twikoo.init({
+envId: 'comment-3gdtn1fbb284b5ce',
+el: '#tcomment',
+// region: 'ap-guangzhou', // 环境地域，默认为 ap-shanghai，如果您的环境地域不是上海，需传此参数
+// path: 'window.location.pathname', // 用于区分不同文章的自定义 js 路径，如果您的文章路径不是 location.pathname，需传此参数
+})
+</script></div></article><footer class="footer wrapper"><div class="social"><a href="mailto:deepMin@mail.deepexplore.top" target="_blank"><i class="fa fa-envelope-o"></i></a><a href="https://github.com/elfisworking" target="_blank"><i class="fa fa-github"></i></a></div><div class="ICP"><a ref="备案" target="_blank" rel="noopener" href="https://beian.miit.gov.cn/">京ICP备2021004603号</a></div><div class="ICP"><a ref="公安" target="_blank" rel="noopener" href="http://www.beian.gov.cn/portal/registerSystemInfo">苏公网安备32120202010423号</a></div><script async="async" src="//cdn.jsdelivr.net/npm/busuanzi@2.3.0/bsz.pure.mini.js"></script></footer><link rel="stylesheet" type="text/css" href="/css/font.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcdn.net/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcdn.net/ajax/libs/fancybox/2.1.5/jquery.fancybox.css"><script src="//cdn.bootcdn.net/ajax/libs/jquery/2.0.3/jquery.min.js"></script><script src="//cdn.bootcdn.net/ajax/libs/fancybox/2.1.5/jquery.fancybox.pack.js"></script><script>$(document).ready(function() {
+  $(".fancybox").fancybox();
+});
+</script></body></html>
